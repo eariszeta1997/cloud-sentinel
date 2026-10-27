@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-sentinel
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloud-sentinel
+  template:
+    metadata:
+      labels:
+        app: cloud-sentinel
+    spec:
+      containers:
+      - name: sentinel-container
+        image: cloud-sentinel-app:latest
+        ports:
+        - containerPort: 8000
+        # Qui il cerchio si chiude: Kubernetes interroga il tuo endpoint Python
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
